@@ -1,0 +1,5 @@
+{
+  "name": "AI Trading Strategy Generator",
+  "description": "Leverages AI to generate technical analysis and trading strategies for stock tickers, providing pivot levels, RSI, MA, and actionable orders.",
+  "requestFramePermissions": []
+}
