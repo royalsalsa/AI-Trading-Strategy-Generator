@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import type { ChartDataPoint } from '../types';
@@ -16,26 +15,26 @@ export const PriceChart: React.FC<PriceChartProps> = ({ data, ticker }) => {
     const strokeColor = lastPrice >= firstPrice ? '#22c55e' : '#ef4444'; // green or red
 
     return (
-        <div className="bg-gray-800 p-4 rounded-lg shadow-lg h-80 w-full">
+        <div className="bg-[#161b22] border border-gray-800 p-4 rounded-lg shadow-lg h-80 w-full">
             <h3 className="text-lg font-semibold text-gray-200 mb-4">{ticker} Price Action (Illustrative)</h3>
             <ResponsiveContainer width="100%" height="90%">
                 <LineChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#4a5568" />
-                    <XAxis dataKey="name" stroke="#a0aec0" tick={{ fontSize: 12 }} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#30363d" />
+                    <XAxis dataKey="name" stroke="#8b949e" tick={{ fontSize: 12 }} />
                     <YAxis 
-                        stroke="#a0aec0" 
+                        stroke="#8b949e" 
                         domain={['dataMin - 1', 'dataMax + 1']} 
                         tickFormatter={(value) => `$${Number(value).toFixed(2)}`}
                         tick={{ fontSize: 12 }}
                     />
                     <Tooltip
                         contentStyle={{
-                            backgroundColor: '#1a202c',
-                            borderColor: '#4a5568'
+                            backgroundColor: '#0d1117',
+                            borderColor: '#30363d'
                         }}
-                        labelStyle={{ color: '#cbd5e0' }}
+                        labelStyle={{ color: '#c9d1d9' }}
                     />
-                    <Legend />
+                    <Legend wrapperStyle={{ color: '#c9d1d9' }}/>
                     <Line type="monotone" dataKey="price" stroke={strokeColor} strokeWidth={2} dot={false} name="Price" />
                 </LineChart>
             </ResponsiveContainer>

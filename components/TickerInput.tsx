@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { SearchIcon } from './icons';
 
 interface TickerInputProps {
     ticker: string;
@@ -66,42 +67,92 @@ const assetCategories = [
 ];
 
 export const TickerInput: React.FC<TickerInputProps> = ({ ticker, setTicker, onSubmit, isLoading }) => {
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const filteredAssetCategories = useMemo(() => {
+        if (!searchQuery) {
+            return assetCategories;
+        }
+        return assetCategories
+            .map(category => ({
+                ...category,
+                options: category.options.filter(
+                    option =>
+                        option.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        option.value.toLowerCase().includes(searchQuery.toLowerCase())
+                ),
+            }))
+            .filter(category => category.options.length > 0);
+    }, [searchQuery]);
+
+    useEffect(() => {
+        const allOptions = filteredAssetCategories.flatMap(c => c.options);
+        if (allOptions.length > 0) {
+            const isSelectedTickerVisible = allOptions.some(o => o.value === ticker);
+            if (!isSelectedTickerVisible) {
+                setTicker(allOptions[0].value);
+            }
+        }
+    }, [filteredAssetCategories, ticker, setTicker]);
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         onSubmit(ticker);
     };
 
+    const noOptionsAvailable = filteredAssetCategories.flatMap(c => c.options).length === 0;
+
     return (
-        <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg shadow-xl flex flex-col sm:flex-row items-center gap-4">
-            <select
-                value={ticker}
-                onChange={(e) => setTicker(e.target.value)}
-                className="flex-grow w-full bg-gray-700 text-white border border-gray-600 rounded-md py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200 appearance-none"
-                disabled={isLoading}
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                  backgroundPosition: 'right 0.5rem center',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundSize: '1.5em 1.5em',
-                }}
-            >
-                {assetCategories.map(category => (
-                    <optgroup key={category.label} label={category.label} className="bg-gray-900 text-gray-400 font-bold">
-                        {category.options.map(option => (
-                            <option key={option.value} value={option.value} className="bg-gray-700 text-white font-normal">
-                                {option.label}
-                            </option>
-                        ))}
-                    </optgroup>
-                ))}
-            </select>
-            <button
-                type="submit"
-                className="w-full sm:w-auto bg-indigo-600 text-white font-bold py-3 px-6 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed transition duration-200 flex items-center justify-center"
-                disabled={isLoading}
-            >
-                {isLoading ? 'Analyzing...' : 'Analyze & Generate Strategy'}
-            </button>
+        <form onSubmit={handleSubmit} className="bg-[#161b22]/50 border border-gray-800 p-6 rounded-lg shadow-xl space-y-4">
+            <div className="relative w-full">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <SearchIcon className="h-5 w-5 text-gray-400" />
+                </span>
+                <input
+                    type="text"
+                    placeholder="Search for an asset..."
+                    aria-label="Search for an asset"
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    className="w-full bg-[#0d1117] text-white border border-gray-700 rounded-md py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-200"
+                />
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+                <select
+                    value={ticker}
+                    onChange={(e) => setTicker(e.target.value)}
+                    className="flex-grow w-full bg-[#0d1117] text-white border border-gray-700 rounded-md py-3 px-4 focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-200 appearance-none disabled:opacity-50"
+                    disabled={isLoading || noOptionsAvailable}
+                    style={{
+                      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                      backgroundPosition: 'right 0.5rem center',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundSize: '1.5em 1.5em',
+                    }}
+                >
+                    {noOptionsAvailable ? (
+                        <option>No assets found</option>
+                    ) : (
+                        filteredAssetCategories.map(category => (
+                            <optgroup key={category.label} label={category.label} className="bg-[#010409] text-gray-400 font-bold">
+                                {category.options.map(option => (
+                                    <option key={option.value} value={option.value} className="bg-[#0d1117] text-white font-normal">
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </optgroup>
+                        ))
+                    )}
+                </select>
+                <button
+                    type="submit"
+                    className="w-full sm:w-auto bg-blue-600 text-white font-bold py-3 px-6 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-blue-500 disabled:bg-blue-400/50 disabled:cursor-not-allowed transition duration-200 flex items-center justify-center"
+                    disabled={isLoading || noOptionsAvailable}
+                >
+                    {isLoading ? 'Analyzing...' : 'Analyze & Generate Strategy'}
+                </button>
+            </div>
         </form>
     );
 };

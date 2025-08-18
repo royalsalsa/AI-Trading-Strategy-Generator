@@ -1,4 +1,3 @@
-
 import React from 'react';
 import type { AnalysisResult } from '../types';
 
@@ -27,23 +26,23 @@ export const AnalysisDisplay: React.FC<{ analysis: AnalysisResult }> = ({ analys
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-                <h4 className="font-bold text-indigo-400 mb-4">Pivot Points</h4>
+            <div className="bg-[#161b22] border border-gray-800 p-6 rounded-lg shadow-lg">
+                <h4 className="font-bold text-blue-400 mb-4">Pivot Points</h4>
                 <div className="space-y-2">
                     <DataPoint label="Resistance 3 (R3)" value={pivotPoints.r3} className="text-red-400" />
                     <DataPoint label="Resistance 2 (R2)" value={pivotPoints.r2} className="text-red-400" />
                     <DataPoint label="Resistance 1 (R1)" value={pivotPoints.r1} className="text-red-400" />
-                    <hr className="border-gray-600 my-2" />
+                    <hr className="border-gray-700 my-2" />
                     <DataPoint label="Pivot Point (PP)" value={pivotPoints.pp} className="text-yellow-400" />
-                    <hr className="border-gray-600 my-2" />
+                    <hr className="border-gray-700 my-2" />
                     <DataPoint label="Support 1 (S1)" value={pivotPoints.s1} className="text-green-400" />
                     <DataPoint label="Support 2 (S2)" value={pivotPoints.s2} className="text-green-400" />
                     <DataPoint label="Support 3 (S3)" value={pivotPoints.s3} className="text-green-400" />
                 </div>
             </div>
 
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-                <h4 className="font-bold text-indigo-400 mb-4">Relative Strength Index (RSI)</h4>
+            <div className="bg-[#161b22] border border-gray-800 p-6 rounded-lg shadow-lg">
+                <h4 className="font-bold text-blue-400 mb-4">Relative Strength Index (RSI)</h4>
                 <div className="text-center">
                     <p className="text-4xl font-bold font-mono">{rsi.value.toFixed(2)}</p>
                     <p className={`font-semibold mt-1 ${
@@ -59,8 +58,8 @@ export const AnalysisDisplay: React.FC<{ analysis: AnalysisResult }> = ({ analys
                 </div>
             </div>
 
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-                <h4 className="font-bold text-indigo-400 mb-4">Moving Averages (SMA)</h4>
+            <div className="bg-[#161b22] border border-gray-800 p-6 rounded-lg shadow-lg">
+                <h4 className="font-bold text-blue-400 mb-4">Moving Averages (SMA)</h4>
                  <div className="space-y-4">
                     <DataPoint label="50-Day MA" value={movingAverages.ma50} />
                     <DataPoint label="200-Day MA" value={movingAverages.ma200} />
