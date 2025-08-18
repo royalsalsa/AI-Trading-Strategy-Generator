@@ -67,7 +67,7 @@ export const getTradingStrategy = async (ticker: string): Promise<{ analysis: An
         const analysis: AnalysisResult = JSON.parse(extractedJson);
         const groundingMetadata = response.candidates?.[0]?.groundingMetadata;
         
-        const sources: Source[] = (groundingMetadata?.groundingChunks ?? []).reduce<Source[]>((acc, chunk) => {
+        const sources: Source[] = (groundingMetadata?.groundingChunks ?? []).reduce((acc, chunk) => {
             if (chunk.web?.uri) {
                 acc.push({
                     web: {
@@ -77,7 +77,7 @@ export const getTradingStrategy = async (ticker: string): Promise<{ analysis: An
                 });
             }
             return acc;
-        }, []);
+        }, [] as Source[]);
 
         return { analysis, sources };
 
