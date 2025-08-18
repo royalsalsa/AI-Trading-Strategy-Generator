@@ -1,3 +1,4 @@
+
 export interface AnalysisResult {
   ticker: string;
   currentPrice: number;
@@ -37,4 +38,17 @@ export interface Source {
     uri: string;
     title?: string;
   };
+}
+
+export interface HistoryItem {
+  id: string;
+  ticker: string;
+  timestamp: string; // ISO string
+  currentPrice: number;
+  signal: 'BUY' | 'SELL' | 'HOLD';
+  description: string;
+  entryPrice: number;
+  stopLoss: number;
+  takeProfit: number;
+  sources?: Source[];
 }
