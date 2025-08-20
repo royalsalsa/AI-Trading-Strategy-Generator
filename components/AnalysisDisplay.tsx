@@ -22,7 +22,14 @@ const RSIBar: React.FC<{ value: number }> = ({ value }) => {
 };
 
 export const AnalysisDisplay: React.FC<{ analysis: AnalysisResult }> = ({ analysis }) => {
-    const { pivotPoints, rsi, movingAverages } = analysis;
+    const { pivotPoints, rsi, movingAverages, marketSentiment, newsSummary } = analysis;
+
+    const sentimentConfig = {
+        Bullish: { textColor: 'text-green-400' },
+        Bearish: { textColor: 'text-red-400' },
+        Neutral: { textColor: 'text-gray-300' },
+    };
+    const currentSentimentConfig = sentimentConfig[marketSentiment] || sentimentConfig.Neutral;
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -71,6 +78,22 @@ export const AnalysisDisplay: React.FC<{ analysis: AnalysisResult }> = ({ analys
                     {analysis.currentPrice > movingAverages.ma200 ? "Price is above 200-day MA (long-term bullish)." : "Price is below 200-day MA (long-term bearish)."}
                 </p>
             </div>
+            
+            {marketSentiment && newsSummary && (
+                <div className="md:col-span-3 bg-[#161b22] border border-gray-800 p-6 rounded-lg shadow-lg">
+                    <h4 className="font-bold text-blue-400 mb-4">Deep Search Analysis</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                        <div className="md:col-span-3 text-center md:border-r md:border-gray-800/50 md:pr-6">
+                            <h5 className="text-sm text-gray-400 mb-1">Market Sentiment</h5>
+                            <p className={`text-2xl font-bold ${currentSentimentConfig.textColor}`}>{marketSentiment}</p>
+                        </div>
+                        <div className="md:col-span-9">
+                            <h5 className="font-semibold text-gray-300 mb-2">Key Factors & News Summary</h5>
+                            <p className="text-sm text-gray-400 leading-relaxed">{newsSummary}</p>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

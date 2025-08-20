@@ -1,3 +1,4 @@
+
 import React from 'react';
 import type { Source } from '../types';
 import { SourceIcon, LinkIcon, ExternalLinkIcon } from './icons';
@@ -11,7 +12,7 @@ export const SourcesDisplay: React.FC<SourcesDisplayProps> = ({ sources }) => {
         <div className="bg-[#161b22] border border-gray-800 p-6 rounded-lg shadow-lg">
             <h4 className="font-bold text-blue-400 mb-4 flex items-center">
                 <SourceIcon className="h-5 w-5 mr-2" />
-                AI Analysis Sources
+                Strategy Data Sources
             </h4>
             <div className="space-y-3">
                 {sources.map((source, index) => {

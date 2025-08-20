@@ -1,10 +1,20 @@
 import React from 'react';
 import { LogoIcon } from './icons';
 
+type Page = 'generator' | 'history' | 'news' | 'watchlist' | 'about';
+
 interface HeaderProps {
-    page: 'about' | 'signals' | 'history';
-    setPage: (page: 'about' | 'signals' | 'history') => void;
+    page: Page;
+    setPage: (page: Page) => void;
 }
+
+const navItems: { id: Page, label: string }[] = [
+    { id: 'generator', label: 'AI Generator' },
+    { id: 'history', label: 'History' },
+    { id: 'news', label: 'News' },
+    { id: 'watchlist', label: 'Watchlist' },
+    { id: 'about', label: 'About' },
+];
 
 const NavLink: React.FC<{
     active: boolean;
@@ -13,9 +23,9 @@ const NavLink: React.FC<{
 }> = ({ active, onClick, children }) => (
     <button
         onClick={onClick}
-        className={`text-sm font-medium transition-colors duration-200 ${
+        className={`text-sm font-medium transition-colors duration-200 px-3 py-1.5 rounded-md ${
             active
-                ? 'text-white'
+                ? 'bg-blue-600 text-white'
                 : 'text-gray-400 hover:text-white'
         }`}
     >
@@ -25,35 +35,19 @@ const NavLink: React.FC<{
 
 
 export const Header: React.FC<HeaderProps> = ({ page, setPage }) => (
-    <header className="bg-transparent sticky top-0 z-20 backdrop-blur-sm bg-[#0A0C12]/80">
-        <div className="container mx-auto px-4 md:px-8 py-4 flex justify-between items-center border-b border-gray-800/50">
-            <div className="flex items-center gap-x-8">
+    <header className="sticky top-0 z-20 backdrop-blur-sm bg-[#10141F]/80 border-b border-gray-800/60">
+        <div className="container mx-auto px-4 md:px-8 py-3 flex justify-between items-center">
+            <div className="flex items-center gap-x-3">
                 <LogoIcon className="h-8" />
+                <h1 className="text-white font-semibold text-xl hidden sm:block">AI Signals</h1>
             </div>
-            <div className="flex items-center gap-x-6">
-                <nav className="hidden md:flex items-center gap-x-6">
-                    <NavLink active={page === 'about'} onClick={() => setPage('about')}>
-                        About Us
+            <nav className="hidden md:flex items-center gap-x-2">
+                 {navItems.map(item => (
+                    <NavLink key={item.id} active={page === item.id} onClick={() => setPage(item.id)}>
+                        {item.label}
                     </NavLink>
-                    <NavLink active={page === 'signals'} onClick={() => setPage('signals')}>
-                        Signals
-                    </NavLink>
-                    <NavLink active={page === 'history'} onClick={() => setPage('history')}>
-                        History
-                    </NavLink>
-                </nav>
-                 <nav className="flex md:hidden items-center gap-x-4">
-                    <NavLink active={page === 'signals'} onClick={() => setPage('signals')}>
-                        Signals
-                    </NavLink>
-                    <NavLink active={page === 'history'} onClick={() => setPage('history')}>
-                        History
-                    </NavLink>
-                </nav>
-                <button className="hidden sm:block bg-white/5 text-white font-medium py-2 px-4 rounded-md hover:bg-white/10 text-sm transition-colors border border-white/10">
-                    Get access
-                </button>
-            </div>
+                ))}
+            </nav>
         </div>
     </header>
 );

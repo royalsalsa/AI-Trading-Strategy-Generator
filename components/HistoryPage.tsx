@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
 import type { HistoryItem } from '../types';
-import { TrashIcon, TrendUpIcon, TrendDownIcon, HoldIcon, SearchIcon, SourceIcon, ExternalLinkIcon } from './icons';
+import { TrashIcon, SearchIcon, SourceIcon, ExternalLinkIcon, InformationCircleIcon } from './icons';
 
 const formatRelativeTime = (isoDate: string): string => {
     const now = new Date();
@@ -52,49 +52,36 @@ const generateSparklineData = (currentPrice: number): { price: number }[] => {
     return data;
 };
 
-
-const SignalBadge: React.FC<{ signal: HistoryItem['signal'] }> = ({ signal }) => {
-    const config = {
-        BUY: {
-            icon: <TrendUpIcon className="h-4 w-4 mr-1.5" />,
-            bgColor: 'bg-green-500/20',
-            textColor: 'text-green-300',
-            borderColor: 'border-green-500/30'
-        },
-        SELL: {
-            icon: <TrendDownIcon className="h-4 w-4 mr-1.5" />,
-            bgColor: 'bg-red-500/20',
-            textColor: 'text-red-300',
-            borderColor: 'border-red-500/30'
-        },
-        HOLD: {
-            icon: <HoldIcon className="h-4 w-4 mr-1.5" />,
-            bgColor: 'bg-gray-500/20',
-            textColor: 'text-gray-300',
-            borderColor: 'border-gray-500/30'
-        },
-    };
-
-    const currentConfig = config[signal] || config.HOLD;
-
-    return (
-        <span className={`inline-flex items-center px-3 py-1 rounded-md text-sm font-semibold border ${currentConfig.bgColor} ${currentConfig.textColor} ${currentConfig.borderColor}`}>
-            {currentConfig.icon}
-            {signal}
-        </span>
-    );
-};
-
 const HistoryCard: React.FC<{ item: HistoryItem }> = ({ item }) => {
     const sparklineData = generateSparklineData(item.currentPrice);
     const trendColor = sparklineData.length > 1 && sparklineData[sparklineData.length - 1].price >= sparklineData[0].price ? '#22c55e' : '#ef4444';
+
+    const sentimentConfig = {
+        Bullish: { textColor: 'text-green-400' },
+        Bearish: { textColor: 'text-red-400' },
+        Neutral: { textColor: 'text-gray-300' },
+    };
+    const sentimentClasses = item.marketSentiment ? (sentimentConfig[item.marketSentiment] || sentimentConfig.Neutral).textColor : '';
 
     return (
         <div className="bg-[#161b22] border border-gray-800 rounded-xl shadow-lg p-4 flex flex-col justify-between transition-all duration-300 hover:shadow-blue-500/10 hover:border-gray-700 hover:-translate-y-1">
             <div>
                 <div className="flex justify-between items-start mb-2">
-                    <span className="font-bold text-xl text-white">{item.ticker}</span>
-                    <SignalBadge signal={item.signal} />
+                    <div className="flex items-center gap-2">
+                        <span className="font-bold text-xl text-white">{item.ticker}</span>
+                         {item.newsSummary && (
+                             <div className="relative group flex items-center">
+                                <InformationCircleIcon className="h-5 w-5 text-gray-500 group-hover:text-blue-400 transition-colors cursor-pointer" />
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 bg-[#0d1117] border border-gray-700 rounded-lg shadow-2xl p-3 z-10 hidden group-hover:block transition-opacity duration-300 text-left opacity-0 group-hover:opacity-100">
+                                    <h5 className={`text-sm font-bold text-gray-200 mb-2 border-b border-gray-700 pb-1`}>
+                                        Sentiment: <span className={sentimentClasses}>{item.marketSentiment}</span>
+                                    </h5>
+                                    <p className="text-xs text-gray-300 leading-normal max-h-40 overflow-y-auto">{item.newsSummary}</p>
+                                    <div className="absolute left-1/2 -translate-x-1/2 -bottom-2 w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-t-8 border-t-gray-700"></div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
                 <p className="text-xs text-gray-400 mb-4">{formatRelativeTime(item.timestamp)}</p>
 
@@ -113,16 +100,12 @@ const HistoryCard: React.FC<{ item: HistoryItem }> = ({ item }) => {
             </div>
             
             <div className="border-t border-gray-700 pt-4">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                        <p className="text-gray-400 text-xs uppercase tracking-wider">Take Profit</p>
-                        <p className="font-mono font-semibold text-lg text-green-400">{item.takeProfit > 0 ? `$${item.takeProfit.toFixed(2)}` : '—'}</p>
-                    </div>
-                     <div className="text-right">
-                        <p className="text-gray-400 text-xs uppercase tracking-wider">Stop Loss</p>
-                        <p className="font-mono font-semibold text-lg text-red-400">{item.stopLoss > 0 ? `$${item.stopLoss.toFixed(2)}` : '—'}</p>
-                    </div>
-                </div>
+                 <style>{`.line-clamp-3 {-webkit-box-orient: vertical; display: -webkit-box; -webkit-line-clamp: 3; overflow: hidden;}`}</style>
+                 <p className="text-gray-400 text-xs uppercase tracking-wider mb-2">Analysis Summary</p>
+                 <p className="text-sm text-gray-300 leading-relaxed line-clamp-3">
+                    {item.analysisDescription}
+                </p>
+
                 {item.sources && item.sources.length > 0 && (
                      <div className="relative group flex justify-center items-center mt-4 cursor-pointer">
                         <SourceIcon className="h-4 w-4 text-gray-500 group-hover:text-blue-400 transition-colors" />
