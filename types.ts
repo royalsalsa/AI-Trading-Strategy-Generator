@@ -1,4 +1,12 @@
 
+export interface CandleDataPoint {
+  time: string; // ISO 8601 string (e.g., "YYYY-MM-DDTHH:mm:ssZ")
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+}
+
 export interface AnalysisResult {
   ticker: string;
   currentPrice: number;
@@ -24,13 +32,15 @@ export interface AnalysisResult {
     description: string;
     entryPrice: number;
     stopLoss: number;
-    takeProfit: number;
+    takeProfit1: number;
+    takeProfit2: number;
+    confidence: number; // A score from 0 to 100
+    analysisDescription: string;
+    riskTip: string;
   };
-}
-
-export interface ChartDataPoint {
-  name: string;
-  price: number;
+  marketSentiment: 'Bullish' | 'Bearish' | 'Neutral';
+  newsSummary: string;
+  historicalData: CandleDataPoint[];
 }
 
 export interface Source {
@@ -45,10 +55,17 @@ export interface HistoryItem {
   ticker: string;
   timestamp: string; // ISO string
   currentPrice: number;
-  signal: 'BUY' | 'SELL' | 'HOLD';
-  description: string;
-  entryPrice: number;
-  stopLoss: number;
-  takeProfit: number;
+  analysisDescription: string;
+  riskTip: string;
   sources?: Source[];
+  marketSentiment: 'Bullish' | 'Bearish' | 'Neutral';
+  newsSummary: string;
+}
+
+export interface NewsArticle {
+  title: string;
+  summary: string;
+  sourceName: string;
+  sourceUrl: string;
+  publishedDate: string; // ISO 8601 string
 }
